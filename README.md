@@ -70,3 +70,4 @@ python3 get-timetable.py
 chmod +x ./get-timetable.sh
 ./get-timetable.sh
 ```
+![image](https://user-images.githubusercontent.com/77790965/176559959-b2b88853-a803-4a5b-a6be-2abd22b60cdd.png)
