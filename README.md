@@ -64,3 +64,9 @@ python3 get-timetable.py
 Для этого нажмите ПКМ по ссылке загрузки и нажмите "Копировать адрес ссылки".
 ![image](https://user-images.githubusercontent.com/77790965/176435993-4308d9a7-9003-4904-92de-a0ab99a23597.png)
 
+### Bash скрипт
+Для его использования просто сделайте файл исполяемым и запустите
+```bash
+chmod +x ./get-timetable.sh
+./get-timetable.sh
+```
