@@ -1,62 +1,62 @@
-from webbrowser import get
 from sys import platform
 import requests
 import os 
 import getpass
-import hashlib 
-import urllib.request
+import hashlib
 
-url = "https://mtuci.ru/upload/iblock/864/1-kurs-_KiIB_10.05.02-Informatsionnaya-bezopasnost-telekommunikatsionnykh-sistem-M-.xlsx"
+dist_url = "https://mtuci.ru/upload/iblock/864/"
+filename = "1-kurs-_KiIB_10.05.02-Informatsionnaya-bezopasnost-telekommunikatsionnykh-sistem-M-.xlsx"
+url = dist_url + filename
 user = getpass.getuser()
+
+
 def create_path():
-    if platform == "linux" or platform == "linux2":
+    if "linux" in platform:
         print('Система определена как linux')
-        return '/home/' + user + '/Downloads/1-kurs-_KiIB_10.05.02-Informatsionnaya-bezopasnost-telekommunikatsionnykh-sistem-M-.xlsx'
+        return '/home/' + user + '/Downloads/' + filename
     elif platform == "darwin":
         print('Система определена как MacOS')
-        return '/Users/' + user + '/Downloads/1-kurs-_KiIB_10.05.02-Informatsionnaya-bezopasnost-telekommunikatsionnykh-sistem-M-.xlsx'
+        return '/Users/' + user + '/Downloads/' + filename
     elif platform == "win32":
         print('Система определена как Windows')
-        return "C:\\Users\\" + user + "\\Desktop\\" + "1-kurs-_KiIB_10.05.02-Informatsionnaya-bezopasnost-telekommunikatsionnykh-sistem-M-.xlsx"
-
-path_string = create_path()
-
-def check_acsess():
-    return urllib.request.urlopen(url).getcode() == 200
-        
-def is_exist():
-    if os.path.exists(path_string) == True:
-        return True
+        return "C:\\Users\\" + user + "\\Desktop\\" + filename
     else:
-        return False
+        return f"{input('Система не определена автоматически. Введите полный путь к нужной директории: ')}/{filename}"
 
 
-def get_md5(fname):
+def get_md5(path):
     hash_md5 = hashlib.md5()
-    with open(path_string, "rb") as file:
+    with open(path, "rb") as file:
         for chunk in iter(lambda: file.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def download_timetable():
-    file=open(path_string,"wb")
-    file_request = requests.get(url)
-    file.write(file_request.content)
-    file.close()
+
+def download_timetable(path):
+    with open(path, "wb") as file:
+        file.write(requests.get(url).content)
 
 
-if check_acsess():
-    if is_exist():
-        oldmd5 = get_md5(path_string)
-        os.remove(path_string)
-        download_timetable()
-        newmd5 = get_md5(path_string)
-        if oldmd5 != newmd5:
-            print('Старое расписание заменено новым')
-        else:
-            print('Расписание не изменилось')
+if __name__ == '__main__':
+    try:
+        request = requests.get(url)
+        request.raise_for_status()
+    except requests.exceptions.ConnectionError as err:
+        print("Не удалось получить доступ к сайту")
+        raise SystemExit(err)
+    except requests.exceptions.HTTPError as err:
+        print("Не удалось получить доступ к сайту")
+        raise SystemExit(err)
     else:
-        download_timetable()
-        print('Скачано новое расписание')
-else:
-    print('Сервер недоступен')
+        path_string = create_path()
+        if os.path.exists(path_string):
+            oldmd5 = get_md5(path_string)
+            os.remove(path_string)
+            download_timetable(path_string)
+            if oldmd5 != get_md5(path_string):
+                print('Старое расписание заменено новым')
+            else:
+                print('Расписание не изменилось')
+        else:
+            download_timetable(path_string)
+            print('Скачано новое расписание')
