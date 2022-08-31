@@ -18,8 +18,13 @@ from loguru import logger as log
 
 
 # Имя последнего использованного пользователем файла расписания
-cache = Path("cache_timetable.json")
-user = getpass.getuser()
+CACHE = Path("cache_timetable.json")
+USER = getpass.getuser()
+
+
+@dataclass(frozen=True)
+class ICONS:
+    info = Path("/icons/info.png")
 
 
 @dataclass(init=False, frozen=False)
@@ -30,7 +35,7 @@ class Timetable:
         if self.path.name != self.url.name:
             raise ValueError("path и url должны вести к файлу с одинаковым названием")
 
-        with open(cache, 'w') as file:
+        with open(CACHE, 'w') as file:
             json.dump({'path': str(self.path), 'url': str(self.url)}, file)
 
     @property
@@ -92,7 +97,7 @@ def configure_flags() -> argparse.Namespace:
 
 
 @log.catch()
-def notify(*text: object, is_enabled: bool = False) -> None:
+def notify(*text: object, is_enabled: bool = False, icon) -> None:
     if is_enabled:
         pass
     else:
@@ -141,7 +146,7 @@ def choose_timetable_url() -> Path | Timetable:
 
     print("[i] Введите индекс нужного файла из списка.\n")
     # Сначала отображаем последний использованный пользователем файл расписания
-    if cache.exists():
+    if CACHE.exists():
         with open('cache_timetable.json', 'r') as file:
             try:
                 cache_data: Dict[str, str] = json.load(file)
@@ -155,7 +160,7 @@ def choose_timetable_url() -> Path | Timetable:
         print(f"[{i}] {url.name}")
     choice = input("\n[?] Введите номер: ")
 
-    if (not choice or choice == ' ') and cache.exists():
+    if (not choice or choice == ' ') and CACHE.exists():
         return cache_timetable
     elif choice.isdigit():
         choice = int(choice)
@@ -172,13 +177,13 @@ def create_timetable_path(filename: str) -> Path | WindowsPath | False:
     """
     if "linux" in platform:
         print('[+] Система определена как Linux')
-        return Path('/home/' + user + '/Downloads/' + filename)
+        return Path('/home/' + USER + '/Downloads/' + filename)
     elif platform == "darwin":
         print('[+] Система определена как MacOS')
-        return Path('/Users/' + user + '/Downloads/' + filename)
+        return Path('/Users/' + USER + '/Downloads/' + filename)
     elif platform == "win32":
         print('[+] Система определена как Windows')
-        return WindowsPath("C:\\Users\\" + user + "\\Desktop\\" + filename)
+        return WindowsPath("C:\\Users\\" + USER + "\\Desktop\\" + filename)
     else:
         return False
 
