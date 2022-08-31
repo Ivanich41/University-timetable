@@ -71,6 +71,26 @@ class Timetable:
         return new_hash == old_hash
 
 
+@log.catch()
+def configure_flags() -> argparse.Namespace:
+    flags_parser = argparse.ArgumentParser()
+    flags_parser.add_argument(
+        '-n', '--notification',
+        action='store_true',
+        help="отправлять всплывающие уведомления о выполнении (Только для Linux)",
+        required=False,
+    )
+    flags_parser.add_argument(
+        '-d', '--debug',
+        action='store_true',
+        help="режим для разработчика",
+        required=False,
+    )
+    # TODO: add autorun flag
+
+    return flags_parser.parse_args()
+
+
 def get(url: str) -> requests.Response:
     """
     "Обертка" для метода `requests.get`
@@ -175,7 +195,7 @@ def choose_path(timetable_url: Path) -> Path:
 
 
 @log.catch()
-def main():
+def main(push_notifications: bool = False):
     timetable_url = choose_timetable_url()
 
     # Если пользователь выбрал расписание из `cache_timetable.json`, то мы сразу получили экземпляр расписания
@@ -196,22 +216,7 @@ def main():
 
 
 if __name__ == '__main__':
-    flags_parser = argparse.ArgumentParser()
-    flags_parser.add_argument(
-        '-n', '--notification',
-        action='store_true',
-        help="отправлять всплывающие уведомления о выполнении (Только для Linux)",
-        required=False,
-    )
-    flags_parser.add_argument(
-        '-d', '--debug',
-        action='store_true',
-        help="режим для разработчика",
-        required=False,
-    )
-    # TODO: add autorun flag
-
-    flags = flags_parser.parse_args()
+    flags = configure_flags()
 
     if flags.debug:
         log.add(Path('error.log'), level='DEBUG', colorize=True, rotation="10 MB", compression='zip')
@@ -224,7 +229,7 @@ if __name__ == '__main__':
         flags.notification = False
 
     try:
-        main()
+        main(flags.notification)
     except (KeyboardInterrupt, SystemExit):
         exit("\n[x] Выполнение прервано")
     else:
