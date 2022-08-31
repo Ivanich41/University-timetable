@@ -24,9 +24,9 @@ python get-timetable.py
 ```bash
 sudo apt install python-tk python3-pip
 ```
-Потом необходимо установить python-модуль requests 
+Потом необходимо установить зависимости 
 ```
-pip3 install requests
+pip3 install -r requirements.txt
 ```
 Теперь ровно как и в Windows нужно открыть терминал в папке со скриптом. Для этого в ubuntu нужно нажать ПКМ и нажать "Open in terminal".
 
@@ -40,9 +40,9 @@ python3 get-timetable.py
 
 ### MacOS
 
-Для начала установите модуль requests 
+Для начала установите зависимости 
 ```
-pip3 install requests
+pip3 install -r requirements.txt
 ```
 Далее необходимо установить SSL сертификаты. Для этго нужно пройти в системную папку Программы -> Папка с установленным Python и запустить Install Certificates.command .
 ![Snimok_ekrana_2022-06-29_v_15_15_39](https://user-images.githubusercontent.com/77790965/176434299-815d14e4-dd34-4cd9-ac3c-ba140cb310ef.png)
