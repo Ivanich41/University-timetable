@@ -196,11 +196,6 @@ def main():
 
 
 if __name__ == '__main__':
-    """
-    TODO: 
-    Остается проблема, что каждый раз, когда имя файла изменяется,
-    то файлы со старым именем никак больше не учитываются, то есть не удаляются с компьютера
-    """
     flags_parser = argparse.ArgumentParser()
     flags_parser.add_argument(
         '-n', '--notification',
