@@ -91,6 +91,14 @@ def configure_flags() -> argparse.Namespace:
     return flags_parser.parse_args()
 
 
+@log.catch()
+def notify(*text: object, is_enabled: bool = False) -> None:
+    if is_enabled:
+        pass
+    else:
+        print(text)
+
+
 def get(url: str) -> requests.Response:
     """
     "Обертка" для метода `requests.get`
