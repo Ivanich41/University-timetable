@@ -3,11 +3,13 @@ from __future__ import annotations
 import json
 import os
 import getpass
+import sys
 from hashlib import md5
 from dataclasses import dataclass
 from sys import platform
 from pathlib import Path, WindowsPath
 
+import argparse
 import requests
 from requests.exceptions import ConnectionError, HTTPError
 from bs4 import BeautifulSoup
@@ -199,7 +201,36 @@ if __name__ == '__main__':
     Остается проблема, что каждый раз, когда имя файла изменяется,
     то файлы со старым именем никак больше не учитываются, то есть не удаляются с компьютера
     """
+    flags_parser = argparse.ArgumentParser()
+    flags_parser.add_argument(
+        '-n', '--notification',
+        action='store_true',
+        help="отправлять всплывающие уведомления о выполнении (Только для Linux)",
+        required=False,
+    )
+    flags_parser.add_argument(
+        '-d', '--debug',
+        action='store_true',
+        help="режим для разработчика",
+        required=False,
+    )
+    # TODO: add autorun flag
+
+    flags = flags_parser.parse_args()
+
+    if flags.debug:
+        log.add(Path('error.log'), level='DEBUG', colorize=True, rotation="10 MB", compression='zip')
+    else:
+        log.remove()
+        log.add(sys.stderr, level='WARNING')
+
+    if 'linux' not in platform and flags.notification:
+        print("[x] Пока что всплывающие уведомления можно использовать только на Linux")
+        flags.notification = False
+
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
-        exit("[x] Выполнение окончено")
+        exit("\n[x] Выполнение прервано")
+    else:
+        exit("[i] Выполнение окончено успешно")
