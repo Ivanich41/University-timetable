@@ -47,7 +47,7 @@ pip3 install -r requirements.txt
 Далее необходимо установить SSL сертификаты. Для этго нужно пройти в системную папку Программы -> Папка с установленным Python и запустить Install Certificates.command .
 ![Snimok_ekrana_2022-06-29_v_15_15_39](https://user-images.githubusercontent.com/77790965/176434299-815d14e4-dd34-4cd9-ac3c-ba140cb310ef.png)
 
-После завершения процесса вы млжете закрыт ьвыпавшее окно терминала.
+После завершения процесса вы можете закрыть выпавшее окно терминала.
 Запустите скрипт командой 
 ```python
 python3 get-timetable.py
